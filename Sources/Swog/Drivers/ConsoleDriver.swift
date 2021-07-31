@@ -7,9 +7,7 @@
 //
 
 import Foundation
-#if canImport(Rainbow)
 import Rainbow
-#endif
 
 extension LoggingLevel {
     var name: String {
@@ -20,7 +18,6 @@ extension LoggingLevel {
         "[\(name.uppercased().padding(toLength: 6, withPad: " ", startingAt: 0))]"
     }
     
-    #if canImport(Rainbow)
     func color(text: String) -> String {
         switch self {
         case .info:
@@ -35,19 +32,12 @@ extension LoggingLevel {
             return text.lightRed
         }
     }
-    #endif
 }
 
 public class ConsoleDriver: LoggingDriver {
     public static let shared = ConsoleDriver()
     
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
-        var output = "[\(String(category).padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(String(format: String(message), arguments: args))"
-        
-        #if canImport(Rainbow)
-        print(level.color(text: output))
-        #else
-        print(output)
-        #endif
+        print(level.color(text: "[\(String(category).padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(String(format: String(message), arguments: args))"))
     }
 }
