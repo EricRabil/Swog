@@ -25,10 +25,12 @@ public class LoggingOperation: Logger {
     @discardableResult
     public func begin(_ message: StaticString? = nil, _ args: CVarArg...) -> Self {
         signpostID = signpost(.begin, name, message, args)
+        #if DEBUG_SIGNPOSTS
         debug("OPERATION.BEGIN: Name=%@ ID=%@", String(name), operationID)
         if let message = message {
             CLLog(level: .debug, category, message, args)
         }
+        #endif
         
         return self
     }
@@ -38,7 +40,9 @@ public class LoggingOperation: Logger {
             warn("Logged an operation event when no operation was started. operationID %@ name %@", operationID, String(name))
             return
         }
+        #if DEBUG_SIGNPOSTS
         CLLog(level: .debug, category, message, args)
+        #endif
         signpost(.event, name, message, args, id: signpostID)
     }
     
@@ -48,11 +52,13 @@ public class LoggingOperation: Logger {
             return
         }
         
+        #if DEBUG_SIGNPOSTS
         if let message = message {
             CLLog(level: .debug, category, message, args)
         }
         
         debug("OPERATION.END: Name=%@ ID=%@", String(name), operationID)
+        #endif
         signpost(.end, name, message, args, id: signpostID)
         self.signpostID = nil
     }
