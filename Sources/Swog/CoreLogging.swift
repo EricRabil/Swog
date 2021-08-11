@@ -9,7 +9,7 @@
 import Foundation
 import OSLog
 
-public enum LoggingLevel {
+public enum LoggingLevel: Int, Codable {
     case info
     case warn
     case error
