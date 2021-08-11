@@ -38,6 +38,10 @@ public class ConsoleDriver: LoggingDriver {
     public static let shared = ConsoleDriver()
     
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
-        print(level.color(text: "[\(String(category).padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(String(format: String(message), arguments: args))"))
+        log(level: level, category: String(category), message: String(format: String(message), arguments: args))
+    }
+    
+    public func log(level: LoggingLevel, category: String, message: String) {
+        print(level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)"))
     }
 }
