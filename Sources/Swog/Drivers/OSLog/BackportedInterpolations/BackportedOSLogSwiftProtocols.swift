@@ -32,7 +32,7 @@ extension BackportedOSLogInterpolation {
   ///     defined by the type `OSLogStringAlignment`.
   ///   - privacy: A privacy qualifier which is either private or public.
   ///     It is auto-inferred by default.
-  @_optimize(none)
+  @_optimize(speed)
   @_transparent
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation<T : CustomStringConvertible>(
@@ -46,7 +46,7 @@ extension BackportedOSLogInterpolation {
     appendInterpolation(value().description, align: align, privacy: privacy)
   }
     
-  @_optimize(none)
+  @_optimize(speed)
   @_transparent
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation<T : RawRepresentable>(
@@ -73,7 +73,7 @@ extension BackportedOSLogInterpolation {
   ///     It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ value: @autoclosure @escaping () -> Any.Type,

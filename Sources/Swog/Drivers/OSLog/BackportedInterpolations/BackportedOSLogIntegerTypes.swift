@@ -41,7 +41,7 @@ extension BackportedOSLogInterpolation {
   ///     It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ number: @autoclosure @escaping () -> Int,
@@ -56,7 +56,7 @@ extension BackportedOSLogInterpolation {
 
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ number: @autoclosure @escaping () -> Int32,
@@ -82,7 +82,7 @@ extension BackportedOSLogInterpolation {
   ///     It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ number: @autoclosure @escaping () -> UInt,
@@ -98,7 +98,7 @@ extension BackportedOSLogInterpolation {
   /// to the OSLogArguments property.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func appendInteger<T>(
     _ number: @escaping () -> T,
     format: BackportedOSLogIntegerFormatting,
@@ -139,7 +139,7 @@ extension BackportedOSLogInterpolation {
   /// the interpolation.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func addIntHeaders(
     _ privacy: BackportedOSLogPrivacy,
     _ byteCount: Int
@@ -163,7 +163,7 @@ extension BackportedOSLogInterpolation {
   // These specify the value of the '*' in a format specifier like: %*.*ld.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func appendPrecisionArgument(_ count: @escaping () -> Int) {
     appendPrecisionAlignCount(
       count,
@@ -172,7 +172,7 @@ extension BackportedOSLogInterpolation {
 
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func appendAlignmentArgument(_ count: @escaping () -> Int) {
     appendPrecisionAlignCount(
       count,
@@ -202,7 +202,7 @@ extension BackportedOSLogInterpolation {
 
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func appendMaskArgument(_ privacy: BackportedOSLogPrivacy) {
     arguments.append(getArgumentHeader(privacy: .auto, type: .mask))
     // Append number of bytes needed to serialize the mask. Mask is 64 bit payload.
@@ -225,7 +225,7 @@ extension BackportedOSLogArguments {
   /// by this instance.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func append<T>(
     _ value: @escaping () -> T
   ) where T: FixedWidthInteger {

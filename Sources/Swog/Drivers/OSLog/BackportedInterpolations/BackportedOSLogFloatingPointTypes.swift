@@ -39,7 +39,7 @@ extension BackportedOSLogInterpolation {
   ///     It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ number: @autoclosure @escaping () -> Float,
@@ -69,7 +69,7 @@ extension BackportedOSLogInterpolation {
   ///     It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ number: @autoclosure @escaping () -> Double,
@@ -110,7 +110,7 @@ extension BackportedOSLogInterpolation {
   /// the interpolation.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func addDoubleHeaders(_ privacy: BackportedOSLogPrivacy) {
     // Append argument header.
     let argumentHeader = getArgumentHeader(privacy: privacy, type: .scalar)
@@ -135,7 +135,7 @@ extension BackportedOSLogArguments {
   /// by this instance.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func append(_ value: @escaping () -> Double) {
     argumentClosures.append({ (position, _, _) in
       serialize(value(), at: &position)

@@ -54,7 +54,7 @@ public struct BackportedOSLogPrivacy {
   /// When the privacy level is public, the value will be displayed
   /// normally without any redaction in the logs.
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   @inlinable
   public static var `public`: BackportedOSLogPrivacy {
     BackportedOSLogPrivacy(privacy: .public, mask: .none)
@@ -65,7 +65,7 @@ public struct BackportedOSLogPrivacy {
   /// When the privacy level is private, the value will be redacted in the logs,
   /// subject to the privacy configuration of the logging system.
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   @inlinable
   public static var `private`: BackportedOSLogPrivacy {
     BackportedOSLogPrivacy(privacy: .private, mask: .none)
@@ -84,7 +84,7 @@ public struct BackportedOSLogPrivacy {
   /// - Parameters:
   ///   - mask: Mask to use with the privacy option.
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   @inlinable
   public static func `private`(mask: Mask) -> BackportedOSLogPrivacy {
     BackportedOSLogPrivacy(privacy: .private, mask: mask)
@@ -95,7 +95,7 @@ public struct BackportedOSLogPrivacy {
   /// The system will automatically decide whether the value should
   /// be captured fully in the logs or should be redacted.
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   @inlinable
   public static var auto: BackportedOSLogPrivacy {
     BackportedOSLogPrivacy(privacy: .auto, mask: .none)
@@ -113,7 +113,7 @@ public struct BackportedOSLogPrivacy {
   /// - Parameters:
   ///   - mask: Mask to use with the privacy option.
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   @inlinable
   public static func auto(mask: Mask) -> BackportedOSLogPrivacy {
     BackportedOSLogPrivacy(privacy: .auto, mask: mask)
@@ -125,7 +125,7 @@ public struct BackportedOSLogPrivacy {
   /// the other two are reserved.
   @inlinable
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   internal var argumentFlag: UInt8 {
     switch privacy {
     case .private:
@@ -139,7 +139,7 @@ public struct BackportedOSLogPrivacy {
 
   @inlinable
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   internal var isAtleastPrivate: Bool {
     switch privacy {
     case .public:
@@ -153,7 +153,7 @@ public struct BackportedOSLogPrivacy {
 
   @inlinable
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   internal var needsPrivacySpecifier: Bool {
     if case .hash = mask {
       return true
@@ -191,7 +191,7 @@ public struct BackportedOSLogPrivacy {
   /// string passed to the os log ABI.
   @inlinable
   @_semantics("constant_evaluable")
-  @_optimize(none)
+  @_optimize(speed)
   internal var privacySpecifier: String? {
     let hasMask = self.hasMask
     var isAuto = false

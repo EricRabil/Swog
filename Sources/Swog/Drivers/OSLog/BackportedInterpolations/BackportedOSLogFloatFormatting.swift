@@ -99,7 +99,7 @@ public struct BackportedOSLogFloatFormatting {
   /// use `.exponential` or `.hybrid` instead.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var fixed: BackportedOSLogFloatFormatting { .fixed() }
 
   /// Displays an interpolated floating-point value in fprintf's `%f` format with
@@ -126,7 +126,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func fixed(
     precision: @escaping @autoclosure () -> Int,
     explicitPositiveSign: Bool = false,
@@ -162,7 +162,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func fixed(
     explicitPositiveSign: Bool = false,
     uppercase: Bool = false
@@ -178,7 +178,7 @@ public struct BackportedOSLogFloatFormatting {
   /// Displays an interpolated floating-point value in hexadecimal format.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var hex: BackportedOSLogFloatFormatting { .hex() }
 
   /// Displays an interpolated floating-point value in hexadecimal format with
@@ -193,7 +193,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func hex(
     explicitPositiveSign: Bool = false,
     uppercase: Bool = false
@@ -211,7 +211,7 @@ public struct BackportedOSLogFloatFormatting {
   /// Prints the number in the form [-]d.ddd...dde±dd.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var exponential: BackportedOSLogFloatFormatting { .exponential() }
 
   /// Displays an interpolated floating-point value in fprintf's `%e` format with
@@ -231,7 +231,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func exponential(
     precision: @escaping @autoclosure () -> Int,
     explicitPositiveSign: Bool = false,
@@ -259,7 +259,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func exponential(
     explicitPositiveSign: Bool = false,
     uppercase: Bool = false
@@ -278,7 +278,7 @@ public struct BackportedOSLogFloatFormatting {
   /// `.exponential` if it has a very large or small exponent.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var hybrid: BackportedOSLogFloatFormatting { .hybrid() }
 
   /// Displays an interpolated floating-point value in fprintf's `%g` format with the
@@ -297,7 +297,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func hybrid(
     precision: @escaping @autoclosure () -> Int,
     explicitPositiveSign: Bool = false,
@@ -326,7 +326,7 @@ public struct BackportedOSLogFloatFormatting {
   ///     lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func hybrid(
     explicitPositiveSign: Bool = false,
     uppercase: Bool = false
@@ -344,7 +344,7 @@ extension BackportedOSLogFloatFormatting {
   /// Returns a fprintf-compatible length modifier for a given argument type
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal static func _formatStringLengthModifier<I: FloatingPoint>(
     _ type: I.Type
   ) -> String? {
@@ -364,7 +364,7 @@ extension BackportedOSLogFloatFormatting {
   /// using the specified alignment `align` and privacy qualifier `privacy`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal func formatSpecifier<I: FloatingPoint>(
     for type: I.Type,
     align: BackportedOSLogStringAlignment,

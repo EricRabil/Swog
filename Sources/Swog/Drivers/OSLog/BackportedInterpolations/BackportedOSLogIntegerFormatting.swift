@@ -84,7 +84,7 @@ public struct BackportedOSLogIntegerFormatting {
   ///     prefixed with zeros if necessary to meet the minimum.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func decimal(
     explicitPositiveSign: Bool = false,
     minDigits: @escaping @autoclosure () -> Int
@@ -104,7 +104,7 @@ public struct BackportedOSLogIntegerFormatting {
   ///     numbers.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func decimal(
     explicitPositiveSign: Bool = false
   ) -> BackportedOSLogIntegerFormatting {
@@ -118,7 +118,7 @@ public struct BackportedOSLogIntegerFormatting {
   /// integers.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var decimal: BackportedOSLogIntegerFormatting { .decimal() }
 
   /// Displays an interpolated unsigned integer as a hexadecimal number with the
@@ -138,7 +138,7 @@ public struct BackportedOSLogIntegerFormatting {
   ///     prefixed with zeros if necessary to meet the minimum.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func hex(
     explicitPositiveSign: Bool = false,
     includePrefix: Bool = false,
@@ -166,7 +166,7 @@ public struct BackportedOSLogIntegerFormatting {
   ///     greater than 9, or `false` to use lowercase letters. The default is `false`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func hex(
     explicitPositiveSign: Bool = false,
     includePrefix: Bool = false,
@@ -184,7 +184,7 @@ public struct BackportedOSLogIntegerFormatting {
   /// This formatting option should be used only with unsigned integers.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var hex: BackportedOSLogIntegerFormatting { .hex() }
 
   /// Displays an interpolated unsigned integer as an octal number with the specified
@@ -204,7 +204,7 @@ public struct BackportedOSLogIntegerFormatting {
   ///     prefixed with zeros if necessary to meet the minimum.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func octal(
     explicitPositiveSign: Bool = false,
     includePrefix: Bool = false,
@@ -232,7 +232,7 @@ public struct BackportedOSLogIntegerFormatting {
   ///     greater than 9, or `false` to use lowercase letters.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func octal(
     explicitPositiveSign: Bool = false,
     includePrefix: Bool = false,
@@ -250,7 +250,7 @@ public struct BackportedOSLogIntegerFormatting {
   /// This formatting option should be used only with unsigned integers.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var octal: BackportedOSLogIntegerFormatting { .octal() }
 }
 
@@ -258,7 +258,7 @@ extension BackportedOSLogIntegerFormatting {
   /// The prefix for the radix in the Swift literal syntax.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal var _prefix: String {
     guard includePrefix else { return "" }
     switch radix {
@@ -275,7 +275,7 @@ extension BackportedOSLogIntegerFormatting {
   /// Returns a fprintf-compatible length modifier for a given argument type.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal static func formatSpecifierLengthModifier<I: FixedWidthInteger>(
     _ type: I.Type
   ) -> String? {
@@ -312,7 +312,7 @@ extension BackportedOSLogIntegerFormatting {
   /// using the specified alignment `align` and privacy qualifier `privacy`.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_effects(readonly)
   internal func formatSpecifier<I: FixedWidthInteger>(
     for type: I.Type,

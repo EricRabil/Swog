@@ -21,7 +21,7 @@ import Swift
 /// This limit is imposed by the logging system.
 @_semantics("constant_evaluable")
 @inlinable
-@_optimize(none)
+@_optimize(speed)
 public var maxOSLogArgumentCount: UInt8 { return 48 }
 
 // Note that this is marked transparent instead of @inline(__always) as it is
@@ -103,14 +103,14 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   /// Denotes the bit that indicates whether there is private argument.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal var privateBitMask: UInt8 { 0x1 }
 
   /// Denotes the bit that indicates whether there is non-scalar argument:
   /// String, NSObject or Pointer.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal var nonScalarBitMask: UInt8 { 0x2 }
 
   /// The second summary byte that denotes the number of arguments, which is
@@ -136,7 +136,7 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   @usableFromInline
   internal var objectArgumentCount: Int
 
-  // Some methods defined below are marked @_optimize(none) to prevent inlining
+  // Some methods defined below are marked @_optimize(speed) to prevent inlining
   // of string internals (such as String._StringGuts) which will interfere with
   // constant evaluation and folding. Note that these methods will be inlined,
   // constant evaluated/folded and optimized in the context of a caller.
@@ -144,7 +144,7 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   @_semantics("oslog.interpolation.init")
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public init(literalCapacity: Int, interpolationCount: Int) {
     // Since the format string and the arguments array are fully constructed
     // at compile time, the parameters are ignored.
@@ -160,7 +160,7 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
 
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public mutating func appendLiteral(_ literal: String) {
     formatString += literal.percentEscapedString
     stringPieces.append(literal)
@@ -175,7 +175,7 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   @inlinable
   @_semantics("constant_evaluable")
   @_effects(readonly)
-  @_optimize(none)
+  @_optimize(speed)
   internal func getArgumentHeader(
     privacy: BackportedOSLogPrivacy,
     type: ArgumentType
@@ -188,7 +188,7 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   @inlinable
   @_semantics("constant_evaluable")
   @_effects(readonly)
-  @_optimize(none)
+  @_optimize(speed)
   internal func getUpdatedPreamble(
     privacy: BackportedOSLogPrivacy,
     isScalar: Bool
@@ -212,7 +212,7 @@ extension String {
   internal var percentEscapedString: String {
     @_semantics("string.escapePercent.get")
     @_effects(readonly)
-    @_optimize(none)
+    @_optimize(speed)
     get {
       return self
         .split(separator: "%", omittingEmptySubsequences: false)
@@ -233,7 +233,7 @@ public struct BackportedOSLogMessage :
   public let interpolation: BackportedOSLogInterpolation
 
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
 //  @_semantics("oslog.message.init_interpolation")
   @_semantics("constant_evaluable")
   public init(stringInterpolation: BackportedOSLogInterpolation) {
@@ -241,7 +241,7 @@ public struct BackportedOSLogMessage :
   }
 
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
 //  @_semantics("oslog.message.init_stringliteral")
   @_semantics("constant_evaluable")
   public init(stringLiteral value: String) {
@@ -253,7 +253,7 @@ public struct BackportedOSLogMessage :
   /// The byte size of the buffer that will be passed to the logging system.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public var bufferSize: Int {
     // The two additional bytes is for the preamble and argument count.
     return interpolation.totalBytesForSerializingArguments + 2
@@ -289,7 +289,7 @@ public struct BackportedOSLogArguments {
     
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal init() {
     argumentClosures = []
     rawArguments = []
@@ -299,7 +299,7 @@ public struct BackportedOSLogArguments {
   /// `OSLogMessage.appendInterpolation`, to the tracked array of closures.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func append(_ header: UInt8) {
     argumentClosures.append({ (position, _, _) in
       serialize(header, at: &position)

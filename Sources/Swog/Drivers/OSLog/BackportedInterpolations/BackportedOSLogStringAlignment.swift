@@ -54,7 +54,7 @@ public struct BackportedOSLogStringAlignment {
   /// Indicates no alignment.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static var none: BackportedOSLogStringAlignment { BackportedOSLogStringAlignment(anchor: .end)  }
 
   /// Right align and display at least `columns` characters.
@@ -65,7 +65,7 @@ public struct BackportedOSLogStringAlignment {
   /// - Parameter columns: minimum number of characters to display.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func right(
     columns: @escaping @autoclosure () -> Int
   ) -> BackportedOSLogStringAlignment {
@@ -80,7 +80,7 @@ public struct BackportedOSLogStringAlignment {
   /// - Parameter columns: minimum number of characters to display.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   public static func left(
     columns: @escaping @autoclosure () -> Int
   ) -> BackportedOSLogStringAlignment {

@@ -39,7 +39,7 @@ extension BackportedOSLogInterpolation {
   ///     It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ argumentString: @autoclosure @escaping () -> String,
@@ -74,7 +74,7 @@ extension BackportedOSLogInterpolation {
   /// the interpolation.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func addStringHeaders(_ privacy: BackportedOSLogPrivacy) {
     // Append argument header.
     let header = getArgumentHeader(privacy: privacy, type: .string)
@@ -98,7 +98,7 @@ extension BackportedOSLogInterpolation {
   @inlinable
   @_semantics("constant_evaluable")
   @_effects(readonly)
-  @_optimize(none)
+  @_optimize(speed)
   internal func getStringFormatSpecifier(
     _ align: BackportedOSLogStringAlignment,
     _ privacy: BackportedOSLogPrivacy
@@ -126,7 +126,7 @@ extension BackportedOSLogArguments {
   /// by this instance.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func append(_ value: @escaping () -> String) {
     argumentClosures.append({ (position, _, stringArgumentOwners) in
       serialize(

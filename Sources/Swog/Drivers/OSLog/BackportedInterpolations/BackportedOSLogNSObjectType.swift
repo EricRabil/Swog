@@ -35,7 +35,7 @@ extension BackportedOSLogInterpolation {
   ///   - privacy: A privacy qualifier which is either private or public. It is auto-inferred by default.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   @_semantics("oslog.requires_constant_arguments")
   public mutating func appendInterpolation(
     _ argumentObject: @autoclosure @escaping () -> NSObject,
@@ -59,7 +59,7 @@ extension BackportedOSLogInterpolation {
   /// the interpolation.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func addNSObjectHeaders(_ privacy: BackportedOSLogPrivacy) {
     // Append argument header.
     let header = getArgumentHeader(privacy: privacy, type: .object)
@@ -83,7 +83,7 @@ extension BackportedOSLogInterpolation {
   @inlinable
   @_semantics("constant_evaluable")
   @_effects(readonly)
-  @_optimize(none)
+  @_optimize(speed)
   internal func getNSObjectFormatSpecifier(_ privacy: BackportedOSLogPrivacy) -> String {
     var specifier = "%"
     if let privacySpecifier = privacy.privacySpecifier {
@@ -102,7 +102,7 @@ extension BackportedOSLogArguments {
   /// by this instance.
   @_semantics("constant_evaluable")
   @inlinable
-  @_optimize(none)
+  @_optimize(speed)
   internal mutating func append(_ value: @escaping () -> NSObject) {
     argumentClosures.append({ (position, objectArguments, _) in
       serialize(value(), at: &position, storingObjectsIn: &objectArguments)
