@@ -18,6 +18,7 @@ public var LoggingDrivers: [LoggingDriver] = [ConsoleDriver.shared]
 
 // MARK: - Old API
 @_transparent
+@_optimize(speed)
 public func CLLog(
     level: LoggingLevel,
     fileID: StaticString = #fileID,
@@ -35,6 +36,7 @@ public func CLLog(
 
 // MARK: - New API
 @_transparent
+@_optimize(speed)
 public func CLLog(level: LoggingLevel, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ category: StaticString, _ message: BackportedOSLogMessage) {
     for driver in LoggingDrivers {
         driver.log(level: level, fileID: fileID, line: line, function: function, dso: dso, category: category, message: message)

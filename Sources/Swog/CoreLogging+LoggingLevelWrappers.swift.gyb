@@ -41,6 +41,7 @@ public func CL${level}(
 %for level in levels:
 
 @_transparent
+@_optimize(speed)
 public func CL${level}(
     _ category: StaticString,
     fileID: StaticString = #fileID,

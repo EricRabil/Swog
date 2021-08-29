@@ -18,14 +18,17 @@ public class ConsoleDriver: LoggingDriver {
         self.privacyLevel = privacyLevel
     }
     
+    @_optimize(speed)
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
         _log(level: level, category: String(category), message: String(format: String(message), arguments: args))
     }
     
+    @_optimize(speed)
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
         _log(level: level, category: String(category), message: message.render(level: privacyLevel))
     }
     
+    @_optimize(speed)
     public func log(level: LoggingLevel, category: String, message: String) {
         _log(level: level, category: category, message: message)
     }
@@ -33,6 +36,7 @@ public class ConsoleDriver: LoggingDriver {
 
 public extension BackportedOSLogMessage {
     @_transparent
+    @_optimize(speed)
     func render(level: BackportedOSLogPrivacy) -> String {
         var arguments: [String] = interpolation.arguments.rawArguments.map { argument, privacy in
             if privacy.privacy == .private {
@@ -68,6 +72,7 @@ public extension BackportedOSLogMessage {
 
 internal extension ConsoleDriver {
     @_transparent
+    @_optimize(speed)
     func _log(level: LoggingLevel, category: String, message: String) {
         let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)")
         

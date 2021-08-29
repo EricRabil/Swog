@@ -34,6 +34,7 @@ let _os_log_impl: _os_log_impl_ = resolveSystemSymbol(named: "_os_log_impl")
 @_transparent
 @inline(__always)
 @usableFromInline
+@_optimize(speed)
 internal func os_log_prepare<P>(_ message: BackportedOSLogMessage, _ cb: (UnsafePointer<UInt8>, UnsafeMutablePointer<UInt8>, Int) throws -> P) rethrows -> P {
     // Compute static constants first so that they can be folded by
     // OSLogOptimization pass.
@@ -48,6 +49,7 @@ internal func os_log_prepare<P>(_ message: BackportedOSLogMessage, _ cb: (Unsafe
     
     @_transparent
     @inline(__always)
+    @_optimize(speed)
     func os_log_serialize(_ interpolation: BackportedOSLogInterpolation, objectArguments: ObjectStorage<NSObject>, stringArgumentOwners: ObjectStorage<Any>) -> UnsafeMutablePointer<UInt8> {
         let bufferMemory = UnsafeMutablePointer<UInt8>.allocate(capacity: interpolation.totalBytesForSerializingArguments + 2)
         
@@ -87,6 +89,8 @@ internal func os_log_prepare<P>(_ message: BackportedOSLogMessage, _ cb: (Unsafe
 }
 
 @_transparent
+@inline(__always)
+@_optimize(speed)
 public func os_log_send(_ dso: UnsafeRawPointer = #dsohandle, _ log: OSLog, _ type: OSLogType, _ message: BackportedOSLogMessage) {
     os_log_prepare(message) { formatString, bufferMemory, bufferSize in
         _os_log_impl(

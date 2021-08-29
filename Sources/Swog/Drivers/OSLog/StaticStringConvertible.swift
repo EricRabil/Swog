@@ -24,7 +24,7 @@ extension Array: ExpressibleByStringLiteral where Element == StaticString {
     
     @_transparent
     @inline(__always)
-    @_optimize(size)
+    @_optimize(speed)
     public var contiguousView: ContiguousArray<UInt8> {
         let count = count, pointer = _baseAddressIfContiguous.unsafelyUnwrapped
         var index = 0, position = 0, bytes = ContiguousArray<UInt8>()

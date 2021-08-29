@@ -32,6 +32,7 @@ public class OSLogDriver: LoggingDriver {
     /**
      Send a traditional logging message via static strings and CVarArgs
      */
+    @_optimize(speed)
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
         let ra = _swift_os_log_return_address()
         
@@ -47,6 +48,7 @@ public class OSLogDriver: LoggingDriver {
     /**
      Sends a logging message constructed from a customized interpolation implementation
      */
+    @_optimize(speed)
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
         os_log_send(dso, log(forCategory: category, fileID: fileID), OSLogType(rawValue: level.rawValue), message)
     }

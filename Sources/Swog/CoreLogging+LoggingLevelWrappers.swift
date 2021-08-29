@@ -78,6 +78,7 @@ public func CLDebug(
 // MARK: - New API
 
 @_transparent
+@_optimize(speed)
 public func CLInfo(
     _ category: StaticString,
     fileID: StaticString = #fileID,
@@ -90,6 +91,7 @@ public func CLInfo(
 }
 
 @_transparent
+@_optimize(speed)
 public func CLWarn(
     _ category: StaticString,
     fileID: StaticString = #fileID,
@@ -102,6 +104,7 @@ public func CLWarn(
 }
 
 @_transparent
+@_optimize(speed)
 public func CLError(
     _ category: StaticString,
     fileID: StaticString = #fileID,
@@ -114,6 +117,7 @@ public func CLError(
 }
 
 @_transparent
+@_optimize(speed)
 public func CLFault(
     _ category: StaticString,
     fileID: StaticString = #fileID,
@@ -126,6 +130,7 @@ public func CLFault(
 }
 
 @_transparent
+@_optimize(speed)
 public func CLDebug(
     _ category: StaticString,
     fileID: StaticString = #fileID,
