@@ -10,17 +10,20 @@ import Swift
 import OSLog
 
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
-public protocol OSLogOperationDelegate {
-    func classicOperation(_ operation: OSLogOperation, updatedWithType type: OSSignpostType, formatString: StaticString?, args: [CVarArg])
-    func operation(_ operation: OSLogOperation, updatedWithType type: OSSignpostType, message: BackportedOSLogMessage?)
+public protocol OSSignpostOperationDelegate {
+    func classicOperation(_ operation: OSSignpostOperation, updatedWithType type: OSSignpostType, formatString: StaticString?, args: [CVarArg])
+    func operation(_ operation: OSSignpostOperation, updatedWithType type: OSSignpostType, message: BackportedOSLogMessage?)
 }
 
+/**
+ Manage an os_signpost operation
+ */
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
-public class OSLogOperation: Logger {
+public class OSSignpostOperation: Logger {
     public let operationID = UUID().uuidString
     public let name: StaticString
     
-    public static var delegate: OSLogOperationDelegate?
+    public static var delegate: OSSignpostOperationDelegate?
     
     @usableFromInline
     internal var signpostID: OSSignpostID!
@@ -30,6 +33,9 @@ public class OSLogOperation: Logger {
         super.init(category: category)
     }
     
+    /**
+     Begins a signpost operation, constructing a new signpost ID that is unique to this log
+     */
     @discardableResult
     public func begin(_ message: StaticString? = nil, _ args: CVarArg...) -> Self {
         signpostID = signpost(.begin, name, message, args)
@@ -72,4 +78,4 @@ public class OSLogOperation: Logger {
 }
 
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
-public typealias LoggingOperation = OSLogOperation
+public typealias LoggingOperation = OSSignpostOperation

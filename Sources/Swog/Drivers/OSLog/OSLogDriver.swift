@@ -17,6 +17,7 @@ public extension String {
     }
 }
 
+/// A logging driver that outputs to OSLog without the consequences of wrapping OSLog
 public class OSLogDriver: LoggingDriver {
     public var logs = [Int: OSLog]()
     
@@ -28,6 +29,9 @@ public class OSLogDriver: LoggingDriver {
         self.subsystemPrefix = subsystemPrefix
     }
     
+    /**
+     Send a traditional logging message via static strings and CVarArgs
+     */
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
         let ra = _swift_os_log_return_address()
         
@@ -40,6 +44,9 @@ public class OSLogDriver: LoggingDriver {
         }
     }
     
+    /**
+     Sends a logging message constructed from a customized interpolation implementation
+     */
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
         os_log_send(dso, log(forCategory: category, fileID: fileID), OSLogType(rawValue: level.rawValue), message)
     }

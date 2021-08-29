@@ -7,6 +7,30 @@ It is mostly inlinable, and aims to be as lightweight of an abstraction as possi
 
 Swog has a driver approach, allowing you to connect it to multiple outlets. It comes with an OSLog and Console driver, but you're welcome to add your own.
 
+## LoggingDriver
+
+The `LoggingDriver` lies at the heart of Swog, and allows you to quickly plug-n-play any logging outlets you need.
+
+It currently has two outlet methods - one that formats string using traditional static strings and CVarArgs, and one that constructs a C string and CVarArgs from a backported implementation of OSLogMessage.
+
+```swift
+import Foundation
+
+public protocol LoggingDriver {
+    func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg])
+    func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage)
+}
+```
+
+LoggingDrivers can be installed by directly mutating the exported `LoggingDrivers` array. This is done for performance purposes, as all logging calls are inlined down to an iteration over this array.
+
+Currently, there are two logging drivers that ship with `Swog`:
+
+- `OSLogDriver`
+- `ConsoleDriver`
+
+The default value of LoggingDrivers in debug builds is `ConsoleDriver`, and `OSLogDriver` in production. Both can run concurrently as well, or with any other configuration.
+
 ## OSLogInterpolation
 Swog has backported OSLogInterpolation/OSLogMessage to allow its usage before Big Sur. This is also supported for the Console driver, and it allows privacy specifier enforcement when printing to stdout.
 

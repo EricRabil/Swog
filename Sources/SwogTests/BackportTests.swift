@@ -79,6 +79,6 @@ class BackportTests: XCTestCase {
             CLInfo("BackportTests", "Hey world! It's \(strings.randomElement()!) and \(numbers.randomElement()!)")
         }
         
-        OSLogOperation(category: "asdf", name: "asdf").begin("asdf", 4).end("asdf", 1234)
+        OSSignpostOperation(category: "asdf", name: "asdf").begin("asdf", 4).end("asdf", 1234)
     }
 }

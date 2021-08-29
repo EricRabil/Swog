@@ -9,7 +9,7 @@ import Foundation
 import OSLog
 
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
-public extension OSLogOperation {
+public extension OSSignpostOperation {
     @_transparent
     func beginSignpost(fileID: StaticString = #fileID, dso: UnsafeRawPointer = #dsohandle, name: StaticString, message: BackportedOSLogMessage) -> Self {
         signpostID = OSSignpostID(log: osLog(forFileID: fileID))
@@ -31,25 +31,42 @@ public extension OSLogOperation {
         
         return self
     }
-%for type in ['end', 'event']:
 
     @_transparent
-    func ${type}(
+    func end(
         fileID: StaticString = #fileID,
         dso: UnsafeRawPointer = #dsohandle,
         name: StaticString,
         message: BackportedOSLogMessage
     ) {
-        signpost(fileID: fileID, dso: dso, type: .${type}, name: name, message: message, id: signpostID)
+        signpost(fileID: fileID, dso: dso, type: .end, name: name, message: message, id: signpostID)
     }
     
     @_transparent
-    func ${type}(
+    func end(
         fileID: StaticString = #fileID,
         dso: UnsafeRawPointer = #dsohandle,
         name: StaticString
     ) {
-        signpost(fileID: fileID, dso: dso, type: .${type}, name: name, id: signpostID)
+        signpost(fileID: fileID, dso: dso, type: .end, name: name, id: signpostID)
     }
-%end
+
+    @_transparent
+    func event(
+        fileID: StaticString = #fileID,
+        dso: UnsafeRawPointer = #dsohandle,
+        name: StaticString,
+        message: BackportedOSLogMessage
+    ) {
+        signpost(fileID: fileID, dso: dso, type: .event, name: name, message: message, id: signpostID)
+    }
+    
+    @_transparent
+    func event(
+        fileID: StaticString = #fileID,
+        dso: UnsafeRawPointer = #dsohandle,
+        name: StaticString
+    ) {
+        signpost(fileID: fileID, dso: dso, type: .event, name: name, id: signpostID)
+    }
 }
