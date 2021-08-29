@@ -22,8 +22,8 @@ public class ConsoleDriver: LoggingDriver {
         _log(level: level, category: String(category), message: render(message: message))
     }
     
-    public func log(level: LoggingLevel, category: StaticString, message: String) {
-        _log(level: level, category: String(category), message: message)
+    public func log(level: LoggingLevel, category: String, message: String) {
+        _log(level: level, category: category, message: message)
     }
 }
 
