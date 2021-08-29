@@ -8,6 +8,7 @@
 
 import Foundation
 import OSLog
+import Swift
 
 public enum LoggingLevel: Int, Codable {
     case info
@@ -19,14 +20,16 @@ public enum LoggingLevel: Int, Codable {
 
 public protocol LoggingDriver {
     func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg])
+    func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage)
 }
 
 #if canImport(OSLog)
-public var LoggingDrivers: [LoggingDriver] = [OSLogDriver.shared]
+public var LoggingDrivers: [LoggingDriver] = [ConsoleDriver.shared]
 #else
 public var LoggingDrivers: [LoggingDriver] = [ConsoleDriver.shared]
 #endif
 
+// MARK: - Old API
 @inlinable @inline(__always)
 public func CLLog(level: LoggingLevel, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ category: StaticString, _ message: StaticString, _ args: [CVarArg]) {
     for driver in LoggingDrivers {
@@ -59,9 +62,36 @@ public func CLFault(_ category: StaticString, fileID: StaticString = #fileID, li
     CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message, args)
 }
 
-@inlinable @inline(__always)
-public func CLDebug(_ category: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ message: StaticString, _ args: CVarArg...) {
-    CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message, args)
+// MARK: - New API
+public func CLLog(level: LoggingLevel, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ category: StaticString, _ message: BackportedOSLogMessage) {
+    for driver in LoggingDrivers {
+        driver.log(level: level, fileID: fileID, line: line, function: function, dso: dso, category: category, message: message)
+    }
+}
+
+@_transparent
+public func CLDebug(_ category: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ message: BackportedOSLogMessage) {
+    CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message)
+}
+
+@_transparent
+public func CLInfo(_ category: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ message: BackportedOSLogMessage) {
+    CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message)
+}
+
+@_transparent
+public func CLWarn(_ category: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ message: BackportedOSLogMessage) {
+    CLLog(level: .warn, fileID: fileID, line: line, function: function, dso: dso, category, message)
+}
+
+@_transparent
+public func CLError(_ category: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ message: BackportedOSLogMessage) {
+    CLLog(level: .error, fileID: fileID, line: line, function: function, dso: dso, category, message)
+}
+
+@_transparent
+public func CLFault(_ category: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ message: BackportedOSLogMessage) {
+    CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message)
 }
 
 extension Notification: CVarArg {}

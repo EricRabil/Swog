@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Swift
 
 public class Logger {
     public let category: StaticString
@@ -42,6 +43,36 @@ public class Logger {
     @inlinable @inline(__always)
     public func callAsFunction(_ message: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ args: CVarArg...) {
         CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message, args)
+    }
+    
+    @inlinable @inline(__always)
+    public func info(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+    
+    @inlinable @inline(__always)
+    public func warn(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .warn, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+    
+    @inlinable @inline(__always)
+    public func error(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .error, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+    
+    @inlinable @inline(__always)
+    public func fault(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+    
+    @inlinable @inline(__always)
+    public func debug(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+    
+    @inlinable @inline(__always)
+    public func callAsFunction(_ message: BackportedOSLogMessage, level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message)
     }
     
     #if canImport(OSLog)

@@ -8,6 +8,7 @@
 #if canImport(OSLog)
 
 import Foundation
+import Swift
 import OSLog
 
 @available(macOS 10.14, *)

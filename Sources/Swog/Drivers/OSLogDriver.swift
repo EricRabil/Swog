@@ -10,6 +10,7 @@
 import Foundation
 import OSLog
 import _SwiftOSOverlayShims
+import Swift
 
 public extension String {
     init(_ staticString: StaticString) {
@@ -66,6 +67,10 @@ public class OSLogDriver: LoggingDriver {
         let log = OSLog(subsystem: "com.barcelona.\(subsystemID)", category: category)
         logs[hash] = log
         return log
+    }
+    
+    public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
+        os_log_send(dso, log(forCategory: category, fileID: fileID), level.osLogType, message)
     }
     
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
