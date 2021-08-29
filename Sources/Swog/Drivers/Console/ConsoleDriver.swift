@@ -23,7 +23,7 @@ public class ConsoleDriver: LoggingDriver {
     }
     
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
-        _log(level: level, category: String(category), message: render(message: message))
+        _log(level: level, category: String(category), message: message.render(level: privacyLevel))
     }
     
     public func log(level: LoggingLevel, category: String, message: String) {
@@ -31,31 +31,15 @@ public class ConsoleDriver: LoggingDriver {
     }
 }
 
-public extension ConsoleDriver {
-    static func render(level: BackportedOSLogPrivacy, message: BackportedOSLogMessage) -> String {
-        ConsoleDriver(privacyLevel: level).render(message: message)
-    }
-}
-
-internal extension ConsoleDriver {
+public extension BackportedOSLogMessage {
     @_transparent
-    func _log(level: LoggingLevel, category: String, message: String) {
-        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)")
-        
-        flockfile(stdout)
-        fwrite(text, 1, text.utf8.count, stdout)
-        funlockfile(stdout)
-    }
-    
-    @_transparent
-    @usableFromInline
-    func render(message: BackportedOSLogMessage) -> String {
-        var arguments = message.interpolation.arguments.rawArguments
-        let pieces = message.interpolation.stringPieces
+    func render(level: BackportedOSLogPrivacy) -> String {
+        var arguments = interpolation.arguments.rawArguments
+        let pieces = interpolation.stringPieces
         
         func render(_ argument: () -> Any, _ privacy: BackportedOSLogPrivacy) -> String {
             if privacy.privacy == .private {
-                guard privacyLevel.isAtleastPrivate else {
+                guard level.isAtleastPrivate else {
                     return "{private}"
                 }
             }
@@ -71,5 +55,16 @@ internal extension ConsoleDriver {
             
             return piece
         }.joined() + arguments.map(render).joined(separator: " ")
+    }
+}
+
+internal extension ConsoleDriver {
+    @_transparent
+    func _log(level: LoggingLevel, category: String, message: String) {
+        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)")
+        
+        flockfile(stdout)
+        fwrite(text, 1, text.utf8.count, stdout)
+        funlockfile(stdout)
     }
 }
