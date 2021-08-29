@@ -31,7 +31,7 @@ public class OSLogOperation: Logger {
     }
     
     @discardableResult
-    func begin(_ message: StaticString? = nil, _ args: CVarArg...) -> Self {
+    public func begin(_ message: StaticString? = nil, _ args: CVarArg...) -> Self {
         signpostID = signpost(.begin, name, message, args)
         
         Self.delegate?.classicOperation(self, updatedWithType: .begin, formatString: message, args: args)
@@ -43,7 +43,7 @@ public class OSLogOperation: Logger {
         return self
     }
     
-    func event(_ message: StaticString, _ args: CVarArg...) {
+    public func event(_ message: StaticString, _ args: CVarArg...) {
         #if DEBUG
         guard signpostID != nil else {
             preconditionFailure("OSLogOperation.begin must be invoked before calling other methods")
@@ -54,7 +54,7 @@ public class OSLogOperation: Logger {
         signpost(.event, name, message, args, id: signpostID)
     }
     
-    func end(_ message: StaticString? = nil, _ args: CVarArg...) {
+    public func end(_ message: StaticString? = nil, _ args: CVarArg...) {
         #if DEBUG
         guard signpostID != nil else {
             preconditionFailure("OSLogOperation.begin must be invoked before calling other methods")

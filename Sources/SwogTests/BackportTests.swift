@@ -78,5 +78,7 @@ class BackportTests: XCTestCase {
         measure(metrics: [XCTCPUMetric(), XCTMemoryMetric(), XCTClockMetric()], options: measureOptions) {
             CLInfo("BackportTests", "Hey world! It's \(strings.randomElement()!) and \(numbers.randomElement()!)")
         }
+        
+        OSLogOperation(category: "asdf", name: "asdf").begin("asdf", 4).end("asdf", 1234)
     }
 }
