@@ -12,7 +12,11 @@ import Swift
 
 public class ConsoleDriver: LoggingDriver {
     public static let shared = ConsoleDriver()
-    public var privacyLevel = BackportedOSLogPrivacy.public
+    public var privacyLevel: BackportedOSLogPrivacy
+    
+    public init(privacyLevel: BackportedOSLogPrivacy = .public) {
+        self.privacyLevel = privacyLevel
+    }
     
     public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: StaticString, args: [CVarArg]) {
         _log(level: level, category: String(category), message: String(format: String(message), arguments: args))
@@ -27,6 +31,12 @@ public class ConsoleDriver: LoggingDriver {
     }
 }
 
+public extension ConsoleDriver {
+    static func render(level: BackportedOSLogPrivacy, message: BackportedOSLogMessage) -> String {
+        ConsoleDriver(privacyLevel: level).render(message: message)
+    }
+}
+
 internal extension ConsoleDriver {
     @_transparent
     func _log(level: LoggingLevel, category: String, message: String) {
@@ -38,6 +48,7 @@ internal extension ConsoleDriver {
     }
     
     @_transparent
+    @usableFromInline
     func render(message: BackportedOSLogMessage) -> String {
         var arguments = message.interpolation.arguments.rawArguments
         let pieces = message.interpolation.stringPieces
