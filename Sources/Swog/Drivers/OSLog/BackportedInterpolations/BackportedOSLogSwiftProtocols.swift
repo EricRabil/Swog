@@ -45,6 +45,20 @@ extension BackportedOSLogInterpolation {
     // that.
     appendInterpolation(value().description, align: align, privacy: privacy)
   }
+    
+  @_optimize(none)
+  @_transparent
+  @_semantics("oslog.requires_constant_arguments")
+  public mutating func appendInterpolation<T : RawRepresentable>(
+    _ value: @autoclosure @escaping () -> T,
+    align: BackportedOSLogStringAlignment = .none,
+    privacy: BackportedOSLogPrivacy = .auto
+  ) where T.RawValue: CustomStringConvertible {
+    // TODO: Dead code elimination does not remove the call to the default value
+    // of alignment: .none. This function is made @_transparent to work around
+    // that.
+    appendInterpolation(value().rawValue.description, align: align, privacy: privacy)
+  }
 
   /// Defines interpolation for meta-types.
   ///
