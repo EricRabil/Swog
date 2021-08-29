@@ -26,7 +26,11 @@ public class ConsoleDriver: LoggingDriver {
 internal extension ConsoleDriver {
     @_transparent
     func log(level: LoggingLevel, category: String, message: String) {
-        print(level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)"))
+        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)")
+        
+        flockfile(stdout)
+        fwrite(text, 1, text.utf8.count, stdout)
+        funlockfile(stdout)
     }
     
     @_transparent
