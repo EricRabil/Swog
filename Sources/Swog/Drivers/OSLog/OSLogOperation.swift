@@ -29,12 +29,8 @@ public class OSLogOperation: Logger {
         self.name = name
         super.init(category: category)
     }
-}
-
-@available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
-public extension OSLogOperation {
+    
     @discardableResult
-    @_transparent
     func begin(_ message: StaticString? = nil, _ args: CVarArg...) -> Self {
         signpostID = signpost(.begin, name, message, args)
         
@@ -47,7 +43,6 @@ public extension OSLogOperation {
         return self
     }
     
-    @_transparent
     func event(_ message: StaticString, _ args: CVarArg...) {
         #if DEBUG
         guard signpostID != nil else {
@@ -59,7 +54,6 @@ public extension OSLogOperation {
         signpost(.event, name, message, args, id: signpostID)
     }
     
-    @_transparent
     func end(_ message: StaticString? = nil, _ args: CVarArg...) {
         #if DEBUG
         guard signpostID != nil else {
