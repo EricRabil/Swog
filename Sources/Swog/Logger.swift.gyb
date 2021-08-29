@@ -1,0 +1,55 @@
+//
+//  Logger.swift
+//
+//
+//  Created by Eric Rabil on 7/31/21.
+//
+
+%{
+    abilities = ['strength', 'dexterity', 'constitution',
+                 'intelligence', 'wisdom', 'charisma']
+                 
+    levels = ['info', 'warn', 'error', 'fault', 'debug']
+}%
+
+import Foundation
+import Swift
+
+public class Logger {
+    public let category: StaticString
+    
+    public init(category: StaticString) {
+        self.category = category
+    }
+    %for level in levels:
+    
+    @inlinable @inline(__always)
+    public func ${level}(_ message: StaticString, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle, _ args: CVarArg...) {
+        CLLog(level: .${level}, fileID: fileID, line: line, function: function, dso: dso, category, message, args)
+    }
+    %end
+    
+    @inlinable @inline(__always)
+    public func callAsFunction(_ message: StaticString, _ args: CVarArg..., level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message, args)
+    }
+    
+    @available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
+    public func operation(named name: StaticString) -> LoggingOperation {
+        LoggingOperation(category: category, name: name)
+    }
+}
+
+public extension Logger {
+    %for level in levels:
+    @_transparent
+    func ${level}(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .${level}, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+    
+    %end
+    @_transparent
+    func callAsFunction(_ message: BackportedOSLogMessage, level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    }
+}

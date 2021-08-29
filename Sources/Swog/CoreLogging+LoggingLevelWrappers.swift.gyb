@@ -1,0 +1,54 @@
+%{
+    abilities = ['strength', 'dexterity', 'constitution',
+                 'intelligence', 'wisdom', 'charisma']
+                 
+    levels = ['Info', 'Warn', 'Error', 'Fault', 'Debug']
+    level_rawValues = {
+        'Info': 1,
+        'Warn': 0,
+        'Error': 16,
+        'Fault': 17,
+        'Debug': 2
+    }
+    default_level = levels[0]
+}%
+
+public enum LoggingLevel: UInt8, Codable {
+% for level in levels:
+    case ${level.lower()} = ${level_rawValues[level]}
+% end
+}
+
+// MARK: - Old API
+
+%for level in levels:
+@_transparent
+public func CL${level}(
+    _ category: StaticString,
+    fileID: StaticString = #fileID,
+    line: Int = #line,
+    function: StaticString = #function,
+    dso: UnsafeRawPointer = #dsohandle,
+    _ message: StaticString,
+    _ args: CVarArg...
+) {
+    CLLog(level: .${level.lower()}, fileID: fileID, line: line, function: function, dso: dso, category, message, args)
+}
+
+%end
+
+// MARK: - New API
+%for level in levels:
+
+@_transparent
+public func CL${level}(
+    _ category: StaticString,
+    fileID: StaticString = #fileID,
+    line: Int = #line,
+    function: StaticString = #function,
+    dso: UnsafeRawPointer = #dsohandle,
+    _ message: BackportedOSLogMessage
+) {
+    CLLog(level: .${level.lower()}, fileID: fileID, line: line, function: function, dso: dso, category, message)
+}
+%end
