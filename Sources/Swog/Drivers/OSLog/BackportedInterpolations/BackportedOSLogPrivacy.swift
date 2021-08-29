@@ -192,16 +192,14 @@ public struct BackportedOSLogPrivacy {
   @inlinable
   @_semantics("constant_evaluable")
   @_optimize(speed)
-  internal var privacySpecifier: String? {
+  internal var privacySpecifier: ClumpedStaticString? {
     let hasMask = self.hasMask
-    var isAuto = false
-    if case .auto = privacy {
-      isAuto = true
-    }
-    if isAuto, !hasMask {
+    if privacy == .auto, !hasMask {
       return nil
     }
-    var specifier: String
+    
+    var specifier: ClumpedStaticString
+    
     switch privacy {
     case .public:
       specifier = "public"
@@ -210,12 +208,14 @@ public struct BackportedOSLogPrivacy {
     default:
       specifier = ""
     }
+    
     if hasMask {
-      if !isAuto {
+      if privacy != .auto {
         specifier += ","
       }
       specifier += "mask.hash"
     }
+    
     return specifier
   }
 }

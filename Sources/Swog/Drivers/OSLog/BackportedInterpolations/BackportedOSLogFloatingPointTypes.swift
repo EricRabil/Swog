@@ -147,15 +147,17 @@ extension BackportedOSLogArguments {
 /// specified by os_log. Note that this is marked transparent instead of
 /// @inline(__always) as it is used in optimize(none) functions.
 @_transparent
-@_alwaysEmitIntoClient
+@usableFromInline
 internal func doubleSizeInBytes() -> Int {
   return 8
 }
 
 /// Serialize a double at the buffer location that `position` points to and
 /// increment `position` by the byte size of the double.
-@_alwaysEmitIntoClient
+
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func serialize(
   _ value: Double,
   at bufferPosition: inout ByteBufferPointer

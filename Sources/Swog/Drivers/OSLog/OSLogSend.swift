@@ -32,35 +32,45 @@ typealias _os_log_impl_ = @convention(c) (
 let _os_log_impl: _os_log_impl_ = resolveSystemSymbol(named: "_os_log_impl")
 
 @_transparent
+@inline(__always)
 @usableFromInline
-internal func os_log_prepare<P>(_ message: BackportedOSLogMessage, _ cb: (String, UnsafeMutablePointer<UInt8>, UInt32) throws -> P) rethrows -> P {
+internal func os_log_prepare<P>(_ message: BackportedOSLogMessage, _ cb: (UnsafePointer<UInt8>, UnsafeMutablePointer<UInt8>, Int) throws -> P) rethrows -> P {
     // Compute static constants first so that they can be folded by
     // OSLogOptimization pass.
-    let formatString = message.interpolation.formatString
-    let preamble = message.interpolation.preamble
-    let argumentCount = message.interpolation.argumentCount
-    let bufferSize = message.bufferSize
-    let objectCount = message.interpolation.objectArgumentCount
-    let stringCount = message.interpolation.stringArgumentCount
-    let uint32bufferSize = UInt32(bufferSize)
-    let argumentClosures = message.interpolation.arguments.argumentClosures
+    let interpolation = message.interpolation
+    let objectCount = interpolation.objectArgumentCount
+    let stringCount = interpolation.stringArgumentCount
 
-    let bufferMemory = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
     // Buffer for storing NSObjects and strings to keep them alive until the
     // _os_log_impl_test call completes.
     let objectArguments = createStorage(capacity: objectCount, type: NSObject.self)
     let stringArgumentOwners = createStorage(capacity: stringCount, type: Any.self)
-
-    var currentBufferPosition = bufferMemory
-    var objectArgumentsPosition = objectArguments
-    var stringArgumentOwnersPosition = stringArgumentOwners
-    serialize(preamble, at: &currentBufferPosition)
-    serialize(argumentCount, at: &currentBufferPosition)
-    argumentClosures.forEach {
-    $0(&currentBufferPosition,
-       &objectArgumentsPosition,
-       &stringArgumentOwnersPosition)
+    
+    @_transparent
+    @inline(__always)
+    func os_log_serialize(_ interpolation: BackportedOSLogInterpolation, objectArguments: ObjectStorage<NSObject>, stringArgumentOwners: ObjectStorage<Any>) -> UnsafeMutablePointer<UInt8> {
+        let bufferMemory = UnsafeMutablePointer<UInt8>.allocate(capacity: interpolation.totalBytesForSerializingArguments + 2)
+        
+        var currentBufferPosition = bufferMemory
+        var objectArgumentsPosition = objectArguments
+        var stringArgumentOwnersPosition = stringArgumentOwners
+        serialize(interpolation.preamble, at: &currentBufferPosition)
+        serialize(interpolation.argumentCount, at: &currentBufferPosition)
+        
+        let baseAddress = interpolation.arguments.argumentClosures._baseAddressIfContiguous.unsafelyUnwrapped
+        let count = interpolation.arguments.argumentClosures.count
+        var index = 0
+        
+        while index < count {
+            baseAddress[index](&currentBufferPosition, &objectArgumentsPosition, &stringArgumentOwnersPosition)
+            index += 1
+        }
+        
+        return bufferMemory
     }
+    
+    let bufferMemory = os_log_serialize(interpolation, objectArguments: objectArguments, stringArgumentOwners: stringArgumentOwners)
+    var contiguousView = interpolation.formatString.contiguousView
     
     defer {
         // The following operation extends the lifetime of objectArguments and
@@ -70,21 +80,22 @@ internal func os_log_prepare<P>(_ message: BackportedOSLogMessage, _ cb: (String
         destroyStorage(objectArguments, count: objectCount)
         destroyStorage(stringArgumentOwners, count: stringCount)
         bufferMemory.deallocate()
+        contiguousView.removeAll()
     }
     
-    return try cb(formatString, bufferMemory, uint32bufferSize)
+    return try cb(contiguousView._baseAddressIfContiguous.unsafelyUnwrapped, bufferMemory, interpolation.totalBytesForSerializingArguments + 2)
 }
 
 @_transparent
 public func os_log_send(_ dso: UnsafeRawPointer = #dsohandle, _ log: OSLog, _ type: OSLogType, _ message: BackportedOSLogMessage) {
-    os_log_prepare(message) { formatString, bufferMemory, uint32bufferSize in
+    os_log_prepare(message) { formatString, bufferMemory, bufferSize in
         _os_log_impl(
             dso,
             log,
             type,
-            formatString,
+            UnsafeRawPointer(formatString).assumingMemoryBound(to: CChar.self),
             bufferMemory,
-            uint32bufferSize)
+            UInt32(bufferSize))
     }
 }
 
@@ -119,7 +130,7 @@ public func os_signpost_send(_ dso: UnsafeRawPointer = #dsohandle, log: OSLog, t
 @_transparent
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, *)
 public func os_signpost_send(_ dso: UnsafeRawPointer = #dsohandle, log: OSLog, type: OSSignpostType, id: OSSignpostID, name: StaticString, message: BackportedOSLogMessage) {
-    os_log_prepare(message) { formatString, bufferMemory, uint32BufferSize in
-        _os_signpost_emit_with_name_impl(dso, log, type, id.rawValue, String(name), formatString, bufferMemory, uint32BufferSize)
+    os_log_prepare(message) { formatString, bufferMemory, bufferSize in
+        _os_signpost_emit_with_name_impl(dso, log, type, id.rawValue, String(name), UnsafeRawPointer(formatString).assumingMemoryBound(to: CChar.self), bufferMemory, UInt32(bufferSize))
     }
 }

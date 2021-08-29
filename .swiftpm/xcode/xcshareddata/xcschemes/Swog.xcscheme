@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cd $WORKSPACE_PATH/../../../&#10;&#10;pwd &gt; /tmp/pwd.txt&#10;&#10;find . -name &apos;*.gyb&apos; |                                               &#10;    while read file; do                                              \&#10;        /usr/local/bin/gyb --line-directive &apos;&apos; -o &quot;${file%.gyb}&quot; &quot;$file&quot;; \&#10;    done;&#10;"
+               scriptText = "cd $WORKSPACE_PATH/../../../&#10;&#10;pwd &gt; /tmp/pwd.txt&#10;&#10;#find . -name &apos;*.gyb&apos; |                                               &#10;#    while read file; do                                              \&#10;#        /usr/local/bin/gyb --line-directive &apos;&apos; -o &quot;${file%.gyb}&quot; &quot;$file&quot;; \&#10;#    done;&#10;"
                shellToInvoke = "/bin/sh">
                <EnvironmentBuildable>
                   <BuildableReference

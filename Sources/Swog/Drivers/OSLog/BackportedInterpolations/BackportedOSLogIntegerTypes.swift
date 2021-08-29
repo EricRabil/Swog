@@ -240,7 +240,7 @@ extension BackportedOSLogArguments {
 /// it is marked transparent instead of @inline(__always) as it is used in
 /// optimize(none) functions.
 @_transparent
-@_alwaysEmitIntoClient
+@usableFromInline
 internal func sizeForEncoding<T>(
   _ type: T.Type
 ) -> Int where T : FixedWidthInteger  {
@@ -249,8 +249,9 @@ internal func sizeForEncoding<T>(
 
 /// Serialize an integer at the buffer location that `position` points to and
 /// increment `position` by the byte size of `T`.
-@_alwaysEmitIntoClient
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func serialize<T>(
   _ value: T,
   at bufferPosition: inout ByteBufferPointer

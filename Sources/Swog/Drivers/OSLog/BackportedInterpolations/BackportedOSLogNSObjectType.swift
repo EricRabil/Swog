@@ -84,8 +84,8 @@ extension BackportedOSLogInterpolation {
   @_semantics("constant_evaluable")
   @_effects(readonly)
   @_optimize(speed)
-  internal func getNSObjectFormatSpecifier(_ privacy: BackportedOSLogPrivacy) -> String {
-    var specifier = "%"
+  internal func getNSObjectFormatSpecifier(_ privacy: BackportedOSLogPrivacy) -> ClumpedStaticString {
+    var specifier: ClumpedStaticString = "%"
     if let privacySpecifier = privacy.privacySpecifier {
       specifier += "{"
       specifier += privacySpecifier
@@ -112,8 +112,10 @@ extension BackportedOSLogArguments {
 
 /// Serialize an NSObject pointer at the buffer location pointed by
 /// `bufferPosition`.
-@_alwaysEmitIntoClient
+
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func serialize(
   _ object: NSObject,
   at bufferPosition: inout ByteBufferPointer,

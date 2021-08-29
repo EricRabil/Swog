@@ -18,7 +18,6 @@
 import Swift
 
 extension BackportedOSLogInterpolation {
-
   /// Defines interpolation for values conforming to CustomStringConvertible. The values
   /// are displayed using the description methods on them.
   ///

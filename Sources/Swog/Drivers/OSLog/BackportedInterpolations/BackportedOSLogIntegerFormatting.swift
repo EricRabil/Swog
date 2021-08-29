@@ -259,7 +259,7 @@ extension BackportedOSLogIntegerFormatting {
   @_semantics("constant_evaluable")
   @inlinable
   @_optimize(speed)
-  internal var _prefix: String {
+  internal var _prefix: ClumpedStaticString {
     guard includePrefix else { return "" }
     switch radix {
     case 2: return "0b"
@@ -278,7 +278,7 @@ extension BackportedOSLogIntegerFormatting {
   @_optimize(speed)
   internal static func formatSpecifierLengthModifier<I: FixedWidthInteger>(
     _ type: I.Type
-  ) -> String? {
+  ) -> StaticString? {
     // IEEE Std 1003.1-2017, length modifiers:
     switch type {
     //   hh - d, i, o, u, x, or X conversion specifier applies to
@@ -318,7 +318,7 @@ extension BackportedOSLogIntegerFormatting {
     for type: I.Type,
     align: BackportedOSLogStringAlignment,
     privacy: BackportedOSLogPrivacy
-  ) -> String {
+  ) -> ClumpedStaticString {
     // Based on IEEE Std 1003.1-2017
     // `d`/`i` is the only signed integral conversions allowed
     if (type.isSigned && radix != 10) {
@@ -362,8 +362,8 @@ extension BackportedOSLogIntegerFormatting {
       if type.isSigned {
         specification += "+"
       } else {
-        var newSpecification = "+"
-        newSpecification += specification
+        var newSpecification: ClumpedStaticString = "+"
+        newSpecification.append(contentsOf: specification)
         specification = newSpecification
       }
     }
@@ -409,7 +409,7 @@ extension BackportedOSLogIntegerFormatting {
       BackportedOSLogIntegerFormatting.formatSpecifierLengthModifier(type) else {
       fatalError("Integer type has unknown byte length")
     }
-    specification += lengthModifier
+    specification.append(lengthModifier)
 
     // 5. The conversion specifier
     switch radix {

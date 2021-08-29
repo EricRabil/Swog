@@ -347,7 +347,7 @@ extension BackportedOSLogFloatFormatting {
   @_optimize(speed)
   internal static func _formatStringLengthModifier<I: FloatingPoint>(
     _ type: I.Type
-  ) -> String? {
+  ) -> StaticString? {
     switch type {
     //   fprintf formatters promote Float to Double
     case is Float.Type: return ""
@@ -369,8 +369,8 @@ extension BackportedOSLogFloatFormatting {
     for type: I.Type,
     align: BackportedOSLogStringAlignment,
     privacy: BackportedOSLogPrivacy
-  ) -> String {
-    var specification = "%"
+  ) -> ClumpedStaticString {
+    var specification: ClumpedStaticString = "%"
     // Add privacy qualifier after % sign within curly braces. This is an
     // os log specific flag.
     if let privacySpecifier = privacy.privacySpecifier {
@@ -406,7 +406,7 @@ extension BackportedOSLogFloatFormatting {
       BackportedOSLogFloatFormatting._formatStringLengthModifier(type) else {
       fatalError("Float type has unknown length")
     }
-    specification += lengthModifier
+    specification.append(lengthModifier)
 
     // 3. Precision and conversion specifier.
     switch notation {

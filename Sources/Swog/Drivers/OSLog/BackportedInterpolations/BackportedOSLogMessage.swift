@@ -27,7 +27,7 @@ public var maxOSLogArgumentCount: UInt8 { return 48 }
 // Note that this is marked transparent instead of @inline(__always) as it is
 // used in optimize(none) functions.
 @_transparent
-@_alwaysEmitIntoClient
+@usableFromInline
 internal var logBitsPerByte: Int { return 3 }
 
 /// Represents a string interpolation passed to the log APIs.
@@ -41,7 +41,7 @@ internal var logBitsPerByte: Int { return 3 }
 public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   /// A format string constructed from the given string interpolation to be
   /// passed to the os_log ABI.
-  public var formatString: String
+    public var formatString: ClumpedStaticString
 
   /// A representation of a sequence of arguments that must be serialized
   /// to a byte buffer and passed to the os_log ABI. Each argument, which is
@@ -65,7 +65,8 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   ///
   public var arguments: BackportedOSLogArguments
     
-    public var stringPieces: [String]
+    /// Only the string literal components, which are expected to be joined using the arguments
+    public var stringPieces: ClumpedStaticString
 
   /// The possible values for the argument type, as defined by the os_log ABI,
   /// which occupies four most significant bits of the first byte of the
@@ -102,15 +103,15 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
 
   /// Denotes the bit that indicates whether there is private argument.
   @_semantics("constant_evaluable")
-  @inlinable
-  @_optimize(speed)
+    @usableFromInline
+    @_transparent
   internal var privateBitMask: UInt8 { 0x1 }
 
   /// Denotes the bit that indicates whether there is non-scalar argument:
   /// String, NSObject or Pointer.
   @_semantics("constant_evaluable")
-  @inlinable
-  @_optimize(speed)
+    @usableFromInline
+    @_transparent
   internal var nonScalarBitMask: UInt8 { 0x2 }
 
   /// The second summary byte that denotes the number of arguments, which is
@@ -148,7 +149,7 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   public init(literalCapacity: Int, interpolationCount: Int) {
     // Since the format string and the arguments array are fully constructed
     // at compile time, the parameters are ignored.
-    formatString = ""
+    formatString = []
     stringPieces = []
     arguments = BackportedOSLogArguments()
     preamble = 0
@@ -158,13 +159,21 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
     objectArgumentCount = 0
   }
 
-  @_semantics("constant_evaluable")
-  @inlinable
-  @_optimize(speed)
-  public mutating func appendLiteral(_ literal: String) {
-    formatString += literal.percentEscapedString
-    stringPieces.append(literal)
-  }
+//    @_semantics("constant_evaluable")
+//    @inlinable
+//    @_optimize(speed)
+//    public mutating func appendLiteral(_ literal: String) {
+//        formatStringComponents.append(_getGlobalStringTablePointer(literal))
+//        _stringPieces.append { literal }
+//    }
+    
+    @_semantics("constant_evaluable")
+    @inlinable
+    @_optimize(speed)
+    public mutating func appendLiteral(_ literal: StaticString) {
+        formatString.append(literal)
+        stringPieces.append(literal)
+    }
 
   /// `appendInterpolation` conformances will be added by extensions to this type.
 
@@ -172,10 +181,10 @@ public struct BackportedOSLogInterpolation : StringInterpolationProtocol {
   /// Flag and type take up the least and most significant four bits
   /// of the header byte, respectively.
   /// This function should be constant evaluable.
-  @inlinable
+  @usableFromInline
+  @_transparent
   @_semantics("constant_evaluable")
   @_effects(readonly)
-  @_optimize(speed)
   internal func getArgumentHeader(
     privacy: BackportedOSLogPrivacy,
     type: ArgumentType
@@ -240,24 +249,25 @@ public struct BackportedOSLogMessage :
     self.interpolation = stringInterpolation
   }
 
-  @inlinable
-  @_optimize(speed)
-//  @_semantics("oslog.message.init_stringliteral")
-  @_semantics("constant_evaluable")
-  public init(stringLiteral value: String) {
-    var s = BackportedOSLogInterpolation(literalCapacity: 1, interpolationCount: 0)
-    s.appendLiteral(value)
-    self.interpolation = s
-  }
-
-  /// The byte size of the buffer that will be passed to the logging system.
-  @_semantics("constant_evaluable")
-  @inlinable
-  @_optimize(speed)
-  public var bufferSize: Int {
-    // The two additional bytes is for the preamble and argument count.
-    return interpolation.totalBytesForSerializingArguments + 2
-  }
+//  @inlinable
+//  @_optimize(speed)
+////  @_semantics("oslog.message.init_stringliteral")
+//  @_semantics("constant_evaluable")
+//  public init(stringLiteral value: String) {
+//    var s = BackportedOSLogInterpolation(literalCapacity: 1, interpolationCount: 0)
+//    s.appendLiteral(value)
+//    self.interpolation = s
+//  }
+    
+    @inlinable
+    @_optimize(speed)
+  //  @_semantics("oslog.message.init_stringliteral")
+    @_semantics("constant_evaluable")
+    public init(stringLiteral value: StaticString) {
+      var s = BackportedOSLogInterpolation(literalCapacity: 1, interpolationCount: 0)
+      s.appendLiteral(value)
+      self.interpolation = s
+    }
 }
 
 @usableFromInline
@@ -265,10 +275,9 @@ internal typealias ByteBufferPointer = UnsafeMutablePointer<UInt8>
 @usableFromInline
 internal typealias ObjectStorage<T> = UnsafeMutablePointer<T>?
 @usableFromInline
-internal typealias ArgumentClosures =
-  [(inout ByteBufferPointer,
+internal typealias ArgumentClosures = ContiguousArray<(inout ByteBufferPointer,
     inout ObjectStorage<NSObject>,
-    inout ObjectStorage<Any>) -> ()]
+    inout ObjectStorage<Any>) -> ()>
 
 /// A representation of a sequence of arguments and headers (of possibly
 /// different types) that have to be serialized to a byte buffer. The arguments
@@ -317,8 +326,9 @@ public struct BackportedOSLogArguments {
 
 /// Serialize a UInt8 value at the buffer location pointed to by `bufferPosition`,
 /// and increment the `bufferPosition` with the byte size of the serialized value.
-@_alwaysEmitIntoClient
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func serialize(
   _ value: UInt8,
   at bufferPosition: inout ByteBufferPointer)
@@ -332,8 +342,9 @@ internal func serialize(
 // are used to hold onto NSObjects and Strings that are interpolated in the log
 // message until the end of the log call.
 
-@_alwaysEmitIntoClient
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func createStorage<T>(
   capacity: Int,
   type: T.Type
@@ -344,8 +355,9 @@ internal func createStorage<T>(
       UnsafeMutablePointer<T>.allocate(capacity: capacity)
 }
 
-@_alwaysEmitIntoClient
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func initializeAndAdvance<T>(
   _ storageOpt: inout ObjectStorage<T>,
   to value: T
@@ -357,8 +369,9 @@ internal func initializeAndAdvance<T>(
   }
 }
 
-@_alwaysEmitIntoClient
+@_transparent
 @inline(__always)
+@usableFromInline
 internal func destroyStorage<T>(_ storageOpt: ObjectStorage<T>, count: Int) {
   // This if statement should get optimized away.
   if let storage = storageOpt {

@@ -34,7 +34,16 @@ public class ConsoleDriver: LoggingDriver {
 public extension BackportedOSLogMessage {
     @_transparent
     func render(level: BackportedOSLogPrivacy) -> String {
-        var arguments = interpolation.arguments.rawArguments
+        var arguments: [String] = interpolation.arguments.rawArguments.map { argument, privacy in
+            if privacy.privacy == .private {
+                guard level.isAtleastPrivate else {
+                    return "{private}"
+                }
+            }
+            
+            return String(describing: argument())
+        }
+        
         let pieces = interpolation.stringPieces
         
         func render(_ argument: () -> Any, _ privacy: BackportedOSLogPrivacy) -> String {
@@ -49,12 +58,11 @@ public extension BackportedOSLogMessage {
         
         return pieces.map { piece in
             if arguments.count > 0 {
-                let (value, privacy) = arguments.removeFirst()
-                return piece + render(value, privacy)
+                return String(piece) + arguments.removeFirst()
             }
             
-            return piece
-        }.joined() + arguments.map(render).joined(separator: " ")
+            return String(piece)
+        }.joined() + arguments.joined(separator: " ")
     }
 }
 
