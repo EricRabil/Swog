@@ -70,11 +70,13 @@ public extension BackportedOSLogMessage {
     }
 }
 
+private let terminator = "\n".white
+
 internal extension ConsoleDriver {
     @_transparent
     @_optimize(speed)
     func _log(level: LoggingLevel, category: String, message: String) {
-        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)\n")
+        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)" +  terminator)
         
         flockfile(stdout)
         fwrite(text, 1, text.utf8.count, stdout)
