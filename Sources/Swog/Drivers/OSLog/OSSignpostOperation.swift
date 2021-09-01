@@ -49,9 +49,11 @@ public class OSSignpostOperation: Logger {
         return self
     }
     
-    public func event(_ message: StaticString, _ args: CVarArg...) {
+    public func event(_ message: StaticString, line: Int = #line, file: StaticString = #file, _ args: CVarArg...) {
         #if DEBUG
         guard signpostID != nil else {
+            print(Thread.callStackSymbols.joined(separator: "\n"))
+            print("\(file):\(line)")
             preconditionFailure("OSLogOperation.begin must be invoked before calling other methods")
         }
         #endif
@@ -60,9 +62,11 @@ public class OSSignpostOperation: Logger {
         signpost(.event, name, message, args, id: signpostID)
     }
     
-    public func end(_ message: StaticString? = nil, _ args: CVarArg...) {
+    public func end(_ message: StaticString? = nil, line: Int = #line, file: StaticString = #file, _ args: CVarArg...) {
         #if DEBUG
         guard signpostID != nil else {
+            print(Thread.callStackSymbols.joined(separator: "\n"))
+            print("\(file):\(line)")
             preconditionFailure("OSLogOperation.begin must be invoked before calling other methods")
         }
         #endif
