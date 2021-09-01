@@ -74,7 +74,7 @@ internal extension ConsoleDriver {
     @_transparent
     @_optimize(speed)
     func _log(level: LoggingLevel, category: String, message: String) {
-        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)")
+        let text = level.color(text: "[\(category.padding(toLength: 20, withPad: " ", startingAt: 0).prefix(20))] \(level.printText) \(message)\n")
         
         flockfile(stdout)
         fwrite(text, 1, text.utf8.count, stdout)
