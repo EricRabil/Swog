@@ -28,6 +28,9 @@ public class OSSignpostOperation: Logger {
     @usableFromInline
     internal var signpostID: OSSignpostID!
     
+    @usableFromInline
+    internal var finished = false
+    
     public init(category: StaticString, name: StaticString) {
         self.name = name
         super.init(category: category)
@@ -58,7 +61,7 @@ public class OSSignpostOperation: Logger {
         }
         #endif
         
-        CLDebug(category, message, args)
+        CLLog(level: .debug, category, message, args)
         signpost(.event, name, message, args, id: signpostID)
     }
     
@@ -72,7 +75,7 @@ public class OSSignpostOperation: Logger {
         #endif
         
         if let message = message {
-            CLDebug(category, message, args)
+            CLLog(level: .debug, category, message, args)
         }
         
         Self.delegate?.classicOperation(self, updatedWithType: .end, formatString: message, args: args)
