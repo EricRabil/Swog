@@ -24,7 +24,7 @@ public class ConsoleDriver: LoggingDriver {
     }
     
     @_optimize(speed)
-    public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
+    public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage, metadata: MetadataValue) {
         _log(level: level, category: String(category), message: message.render(level: privacyLevel))
     }
     

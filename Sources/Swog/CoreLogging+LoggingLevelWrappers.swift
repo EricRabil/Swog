@@ -5,6 +5,20 @@ public enum LoggingLevel: UInt8, Codable {
     case error = 16
     case fault = 17
     case debug = 2
+    
+    public enum Name: String, Codable {
+        case info, warn, error, fault, debug
+    }
+    
+    public var name: Name {
+        switch self {
+        case .info: return .info
+        case .warn: return .warn
+        case .error: return .error
+        case .fault: return .fault
+        case .debug: return .debug
+        }
+    }
 }
 
 // MARK: - Old API
@@ -85,9 +99,10 @@ public func CLInfo(
     line: Int = #line,
     function: StaticString = #function,
     dso: UnsafeRawPointer = #dsohandle,
-    _ message: BackportedOSLogMessage
+    _ message: BackportedOSLogMessage,
+    metadata: MetadataValue = nil
 ) {
-    CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
 }
 
 @_transparent
@@ -98,9 +113,10 @@ public func CLWarn(
     line: Int = #line,
     function: StaticString = #function,
     dso: UnsafeRawPointer = #dsohandle,
-    _ message: BackportedOSLogMessage
+    _ message: BackportedOSLogMessage,
+    metadata: MetadataValue = nil
 ) {
-    CLLog(level: .warn, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    CLLog(level: .warn, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
 }
 
 @_transparent
@@ -111,9 +127,10 @@ public func CLError(
     line: Int = #line,
     function: StaticString = #function,
     dso: UnsafeRawPointer = #dsohandle,
-    _ message: BackportedOSLogMessage
+    _ message: BackportedOSLogMessage,
+    metadata: MetadataValue = nil
 ) {
-    CLLog(level: .error, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    CLLog(level: .error, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
 }
 
 @_transparent
@@ -124,9 +141,10 @@ public func CLFault(
     line: Int = #line,
     function: StaticString = #function,
     dso: UnsafeRawPointer = #dsohandle,
-    _ message: BackportedOSLogMessage
+    _ message: BackportedOSLogMessage,
+    metadata: MetadataValue = nil
 ) {
-    CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
 }
 
 @_transparent
@@ -137,7 +155,8 @@ public func CLDebug(
     line: Int = #line,
     function: StaticString = #function,
     dso: UnsafeRawPointer = #dsohandle,
-    _ message: BackportedOSLogMessage
+    _ message: BackportedOSLogMessage,
+    metadata: MetadataValue = nil
 ) {
-    CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
 }

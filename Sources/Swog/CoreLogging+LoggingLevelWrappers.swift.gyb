@@ -48,8 +48,9 @@ public func CL${level}(
     line: Int = #line,
     function: StaticString = #function,
     dso: UnsafeRawPointer = #dsohandle,
-    _ message: BackportedOSLogMessage
+    _ message: BackportedOSLogMessage,
+    metadata: MetadataValue = nil
 ) {
-    CLLog(level: .${level.lower()}, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    CLLog(level: .${level.lower()}, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
 }
 %end

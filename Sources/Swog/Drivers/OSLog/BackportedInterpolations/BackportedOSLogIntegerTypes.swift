@@ -243,7 +243,7 @@ extension BackportedOSLogArguments {
 @usableFromInline
 internal func sizeForEncoding<T>(
   _ type: T.Type
-) -> Int where T : FixedWidthInteger  {
+) -> Int where T : FixedWidthInteger {
   return type.bitWidth &>> logBitsPerByte
 }
 

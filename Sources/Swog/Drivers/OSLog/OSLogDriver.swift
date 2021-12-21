@@ -49,7 +49,7 @@ public class OSLogDriver: LoggingDriver {
      Sends a logging message constructed from a customized interpolation implementation
      */
     @_optimize(speed)
-    public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage) {
+    public func log(level: LoggingLevel, fileID: StaticString, line: Int, function: StaticString, dso: UnsafeRawPointer, category: StaticString, message: BackportedOSLogMessage, metadata: MetadataValue) {
         os_log_send(dso, log(forCategory: category, fileID: fileID), OSLogType(rawValue: level.rawValue), message)
     }
 }

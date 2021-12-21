@@ -55,37 +55,37 @@ public class Logger {
 public extension Logger {
     @_transparent
     @_optimize(speed)
-    func info(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func info(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .info, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
     
     @_transparent
     @_optimize(speed)
-    func warn(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: .warn, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func warn(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .warn, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
     
     @_transparent
     @_optimize(speed)
-    func error(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: .error, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func error(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .error, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
     
     @_transparent
     @_optimize(speed)
-    func fault(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func fault(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .fault, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
     
     @_transparent
     @_optimize(speed)
-    func debug(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func debug(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .debug, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
     
     @_transparent
     @_optimize(speed)
-    func callAsFunction(_ message: BackportedOSLogMessage, level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func callAsFunction(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
 }
