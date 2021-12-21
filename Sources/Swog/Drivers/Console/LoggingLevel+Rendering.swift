@@ -9,13 +9,8 @@ import Foundation
 
 internal extension LoggingLevel {
     @_transparent
-    var name: String {
-        "\(self)"
-    }
-    
-    @_transparent
     var printText: String {
-        "[\(name.uppercased().padding(toLength: 6, withPad: " ", startingAt: 0))]"
+        "[\(name.rawValue.uppercased().padding(toLength: 6, withPad: " ", startingAt: 0))]"
     }
     
     @_transparent

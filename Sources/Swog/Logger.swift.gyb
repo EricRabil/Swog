@@ -44,14 +44,14 @@ public extension Logger {
     %for level in levels:
     @_transparent
     @_optimize(speed)
-    func ${level}(_ message: BackportedOSLogMessage, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: .${level}, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func ${level}(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: .${level}, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
     
     %end
     @_transparent
     @_optimize(speed)
-    func callAsFunction(_ message: BackportedOSLogMessage, level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
-        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message)
+    func callAsFunction(_ message: BackportedOSLogMessage, metadata: MetadataValue = nil, level: LoggingLevel = .info, fileID: StaticString = #fileID, line: Int = #line, function: StaticString = #function, dso: UnsafeRawPointer = #dsohandle) {
+        CLLog(level: level, fileID: fileID, line: line, function: function, dso: dso, category, message, metadata: metadata)
     }
 }
