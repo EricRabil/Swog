@@ -20,6 +20,7 @@ public extension String {
 /// A logging driver that outputs to OSLog without the consequences of wrapping OSLog
 public class OSLogDriver: LoggingDriver {
     public var logs = [Int: OSLog]()
+    @usableFromInline internal let writeSemaphore = DispatchSemaphore(value: 1)
     
     public static let shared = OSLogDriver()
     
@@ -66,6 +67,14 @@ internal extension OSLogDriver {
             return logs[hash]!
         }
         
+        writeSemaphore.wait()
+        defer {
+            writeSemaphore.signal()
+        }
+        if let log = logs[hash] {
+            // did someone else beat us to the punch?
+            return log
+        }
         let log = OSLog(subsystem: String(subsystemPrefix) + subsystemID, category: category)
         logs[hash] = log
         return log
