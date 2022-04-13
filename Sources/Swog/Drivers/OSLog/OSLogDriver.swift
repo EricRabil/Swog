@@ -19,7 +19,8 @@ public extension String {
 
 /// A logging driver that outputs to OSLog without the consequences of wrapping OSLog
 public class OSLogDriver: LoggingDriver {
-    public var logs = [Int: OSLog]()
+    public var logs: NSMapTable<NSNumber, OSLog> = NSMapTable.strongToStrongObjects()
+    
     @usableFromInline internal let writeSemaphore = DispatchSemaphore(value: 1)
     
     public static let shared = OSLogDriver()
@@ -55,28 +56,51 @@ public class OSLogDriver: LoggingDriver {
     }
 }
 
+extension StaticString {
+    @_transparent
+    @usableFromInline
+    func firstIndex(of character: StaticString) -> Int? {
+        guard let pos = strchr(utf8Start, Int32(character.utf8Start.pointee)) else {
+            return nil
+        }
+        return abs(utf8Start.distance(to: UnsafeRawPointer(pos).assumingMemoryBound(to: UInt8.self)))
+    }
+    
+    @_transparent
+    @usableFromInline
+    func hashUpToCharacter(_ character: StaticString, hasher: inout Hasher) {
+        let index = firstIndex(of: character) ?? utf8CodeUnitCount
+        hasher.combine(bytes: UnsafeRawBufferPointer(start: utf8Start, count: index))
+    }
+}
+
 internal extension OSLogDriver {
     @_transparent
     @usableFromInline
     func log(forCategory category: StaticString, fileID: StaticString) -> OSLog {
-        let subsystemID = String(String(fileID).split(separator: "/").first!)
-        let category = String(category)
-        let hash = [subsystemID, category].hashValue
+        var hasher = Hasher()
+        fileID.hashUpToCharacter("/", hasher: &hasher)
+        hasher.combine(bytes: UnsafeRawBufferPointer(start: category.utf8Start, count: category.utf8CodeUnitCount))
+        let hash = hasher.finalize() as NSNumber
         
-        if _fastPath(logs[hash] != nil) {
-            return logs[hash]!
+        var log = logs.object(forKey: hash)
+        
+        if _fastPath(log != nil) {
+            return log!
         }
         
         writeSemaphore.wait()
         defer {
             writeSemaphore.signal()
         }
-        if let log = logs[hash] {
+        if let log = logs.object(forKey: hash) {
             // did someone else beat us to the punch?
             return log
         }
-        let log = OSLog(subsystem: String(subsystemPrefix) + subsystemID, category: category)
-        logs[hash] = log
-        return log
+        
+        let subsystemID = String(String(fileID).split(separator: "/").first!)
+        log = OSLog(subsystem: String(subsystemPrefix) + subsystemID, category: String(category))
+        logs.setObject(log, forKey: hash)
+        return log!
     }
 }
