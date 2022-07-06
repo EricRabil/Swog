@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum MetadataValue: Codable, Hashable, ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, ExpressibleByDictionaryLiteral, ExpressibleByArrayLiteral, ExpressibleByBooleanLiteral, ExpressibleByNilLiteral {
+public enum MetadataValue: Codable, Hashable, ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, ExpressibleByDictionaryLiteral, ExpressibleByArrayLiteral, ExpressibleByBooleanLiteral, ExpressibleByNilLiteral, ExpressibleByStringInterpolation {
     public typealias BooleanLiteralType = Bool
     
     public init(booleanLiteral value: Bool) {
