@@ -11,9 +11,11 @@ import Swift
 
 public class Logger {
     public let category: StaticString
+    public let subsystem: StaticString?
     
-    public init(category: StaticString) {
+    public init(category: StaticString, subsystem: StaticString? = nil) {
         self.category = category
+        self.subsystem = subsystem
     }
     
     @inlinable @inline(__always)

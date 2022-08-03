@@ -77,7 +77,7 @@ extension StaticString {
 internal extension OSLogDriver {
     @_transparent
     @usableFromInline
-    func log(forCategory category: StaticString, fileID: StaticString) -> OSLog {
+    func log(forCategory category: StaticString, subsystem: StaticString? = nil, fileID: StaticString) -> OSLog {
         var hasher = Hasher()
         fileID.hashUpToCharacter("/", hasher: &hasher)
         hasher.combine(bytes: UnsafeRawBufferPointer(start: category.utf8Start, count: category.utf8CodeUnitCount))
@@ -98,8 +98,16 @@ internal extension OSLogDriver {
             return log
         }
         
-        let subsystemID = String(String(fileID).split(separator: "/").first!)
-        log = OSLog(subsystem: String(subsystemPrefix) + subsystemID, category: String(category))
+        var osLogSubsystem: String {
+            if let subsystem = subsystem {
+                return String(subsystem)
+            } else {
+                let subsystemID = String(String(fileID).split(separator: "/").first!)
+                return String(subsystemPrefix) + subsystemID
+            }
+        }
+        
+        log = OSLog(subsystem: osLogSubsystem, category: String(category))
         logs.setObject(log, forKey: hash)
         return log!
     }

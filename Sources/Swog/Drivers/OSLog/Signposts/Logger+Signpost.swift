@@ -69,6 +69,6 @@ public extension Logger {
     @_transparent
     @usableFromInline
     internal func osLog(forFileID fileID: StaticString) -> OSLog {
-        OSLogDriver.shared.log(forCategory: category, fileID: fileID)
+        OSLogDriver.shared.log(forCategory: category, subsystem: subsystem, fileID: fileID)
     }
 }
