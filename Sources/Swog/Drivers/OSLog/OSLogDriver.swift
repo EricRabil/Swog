@@ -11,6 +11,9 @@ import OSLog
 import _SwiftOSOverlayShims
 import Swift
 
+@_silgen_name("os_log_create")
+@usableFromInline func os_log_create(_ subsystem: UnsafePointer<CChar>, _ category: UnsafePointer<CChar>) -> OSLog
+
 public extension String {
     init(_ convertible: StaticString) {
         self = String(cString: convertible.utf8Start)
@@ -106,8 +109,7 @@ internal extension OSLogDriver {
                 return String(subsystemPrefix) + subsystemID
             }
         }
-        
-        log = OSLog(subsystem: osLogSubsystem, category: String(category))
+        log = os_log_create(osLogSubsystem, String(category))
         logs.setObject(log, forKey: hash)
         return log!
     }
